@@ -1,2 +1,2 @@
 # polynomials
-This is a Python 3.10.1 script containing the classes which provides some useful tools for points and polynomials in cartesian coordinate system. Still Work in Progress....
+This is a project in which I am creating some basical but essential mathematical tools.
