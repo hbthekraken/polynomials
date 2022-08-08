@@ -1,2 +1,2 @@
 # polynomials
-This is a project in which I am creating some basical but essential mathematical tools.
+This is a project in which I am creating some basic but essential mathematical tools.
