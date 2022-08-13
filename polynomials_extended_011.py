@@ -245,7 +245,7 @@ class Line(Polynom):
 
     def wrt_l2(self, l2):
         if not isinstance(l2, Line):
-            raise ValueError("Given argument mıust be a line.")
+            raise ValueError("Given argument must be a line.")
         if self.type == l2.type:
             if self.f(1) == l2.f(1):
                 return "C"  # meaning that these lines are coinciding.
