@@ -173,7 +173,7 @@ class Line(Polynom):
     #  L: Linear Equation, such as ax + by + c = 0, a, b anc c are being expected. This type is set by default.
     #  Expected tuple for L mode is (a, b, c), where a,b and c are real numbers.
     #  (if b is given as zero, it will be treated specifically, not as a polynomial.)
-    #  P: Polynomial, such as y = mx + n, where y is the slope of the line and n is the interception of line with y axis.
+    #  P: Polynomial, such as y = mx + n, where m is the slope of the line and n is the interception of line with y axis.
     #  Expected tuple for P mode is (m, n), where m and n are real numbers.
     #  !!!_a, b, c, m, or n, all values should be given in the tuple regardless of whether they are zero or not!_!!!
     def __init__(self, t_of_coefs, equation_type="L"):
