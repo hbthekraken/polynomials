@@ -1,6 +1,10 @@
 from math import cos, sin, pi, isnan
 from random import uniform
 
+# Links to all mathematical backround used here which are Aberth's method to find all roots simultaneously and Lagrange's improved bounds on all roots of a polynomial
+# https://en.wikipedia.org/wiki/Geometrical_properties_of_polynomial_roots#Bounds_on_all_roots
+# https://en.wikipedia.org/wiki/Aberth_method
+# I tested this code with some polynomials that I created by myself with their roots on paper. It does seem to work!
 
 class Polynom:
 
