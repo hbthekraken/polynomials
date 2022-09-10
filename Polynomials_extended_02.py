@@ -168,9 +168,3 @@ def get_zeros(P, error=1e-15, prec=3):
 
         return _z
 
-
-#  P(x) = x^4 + 35*x^3 - 1129*x^2 - 4804*x - 10120
-#  -55, 22, 2-2i, 2+2i
-
-P = Polynom(1, 38, -894, 6152, -12992)
-print(get_zeros(P))
