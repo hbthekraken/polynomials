@@ -1,31 +1,33 @@
 from math import cos, sin, pi, isnan
 from random import uniform
 
-# Links to all mathematical backround used here which are Aberth's method to find all roots simultaneously and Lagrange's improved bounds on all roots of a polynomial
+
+# Links to all mathematical background used here which are Aberth's method to find all roots simultaneously and
+# Lagrange's improved bounds on all roots of a polynomial
 # https://en.wikipedia.org/wiki/Geometrical_properties_of_polynomial_roots#Bounds_on_all_roots
 # https://en.wikipedia.org/wiki/Aberth_method
 # I tested this code with some polynomials that I created by myself with their roots on paper. It does seem to work!
 
-class Polynom:
 
-    # an*x^n + an-1*x^n-1 + ... a3x^3 + a2x^2 + a1^x + a0 = P(x) is the polynom should be given. P(x) can be defined
-    # as *var_name* = Polynom(an, an-1, ..., a3, a2, a1, a0) in the given order, the initial zeros will be eliminated,
+class Polynomial:
+
+    # an*x^n + an-1*x^n-1 + ... a_3x^3 + a_2x^2 + a_1^x + a_0 = P(x) is the polynom should be given. P(x) can be defined
+    # as *var_name* = Polynomial(a_n, a_n-1, ..., a_2, a_1, a_0) in the given order, the initial zeros will be eliminated,
     # which can and will decrease the order of the polynomial. E.g. P = Polynom(0, 0, 0, 1, 2, 3) will be regarded as
     # P(x) = x^2 + 2x + 3
 
     def __init__(self, *coefficients):  # coefficients = [an, an-1, an-2, ..., a3, a2, a1, a0]
         self.a = list(coefficients)
-        index = 0
-        while index == 0:  # initial zeroes are being eliminated here.
+
+        for index in range(0, len(self.a)):
             if self.a[index] == 0:
                 del self.a[index]
             else:
-                index += 1
-        del index
+                continue
+
         self.a.reverse()  # creating the main coefficient list in which coefficients are listed as a = [a0, a1, a2, ..., an-1, an]
         self.degree = len(self.a) - 1  # degree of the polynomial is determined from the number of coefficients
-        if not bool(
-                self.a):  # an exception occurs when the list 'a' is empty, it means P(x) = 0, whose degree is not defined, so interpreted as float 'nan' here.
+        if not bool(self.a):  # an exception occurs when the list 'a' is empty, it means P(x) = 0, whose degree is not defined, so interpreted as float 'nan' here.
             self.degree = float('nan')
             self.a = [0]
 
@@ -35,7 +37,7 @@ class Polynom:
         for i in range(1, len(self.a)):
             temp_arr.append(self.a[i] * i)
         temp_arr.reverse()
-        temp_pol = Polynom(*temp_arr)
+        temp_pol = Polynomial(*temp_arr)
         return temp_pol
 
     def eval_at(self, x):  # Evaluation of the polynomial at x.
@@ -65,6 +67,8 @@ def get_upper(P):  # Function to get the upper limit of the absolute values of t
     temp_arr, an = [], P.a[-1]
     if P.degree == 0:
         return float('nan')
+    elif isnan(P.degree):
+        return float('nan')
     for i in range(1, P.degree + 1):
         temp_arr.append(abs(P.a[-(i + 1)] / an) ** (1 / i))
     temp_arr.sort()
@@ -77,7 +81,7 @@ def get_upper(P):  # Function to get the upper limit of the absolute values of t
 
 def get_lower(P):  # To find a lower bound for the roots of the polynomial object passed as parameter into the function
     temp_a = P.a.copy()
-    reverseP = Polynom(*temp_a)
+    reverseP = Polynomial(*temp_a)
     rU = get_upper(reverseP)
     if rU == 0:
         return 0
@@ -93,6 +97,8 @@ def getrandim(n, absU, absL, p=12, onlyReal=False):
     # Using random.uniform and polar coordinates to create pseudo-random complex numbers in an interval.
     # Due to the fact that any z = a + bi = r*cos(theta) + i*r*sin(theta)
     # Here, r is the modulo of z which is created randomly, theta is a randomly generated angle between 0 and 2*pi.
+    if isnan(absU) or isnan(absL):
+        return None
     complex_num_set = []
     if onlyReal:
         return list(x := uniform(absL, absU) for i in range(n))
@@ -120,6 +126,8 @@ def get_abs_average(_iter):
 #  equations are being used. E.g. quadratic formula for polynomials of degree 2.
 def get_zeros(P, error=1e-15, prec=3):
     if P.degree == 0:
+        return float('nan')
+    elif isnan(P.degree):
         return float('nan')
     elif P.degree == 1:
         return tuple(-(P.a[0] / P.a[1]))
@@ -152,7 +160,8 @@ def get_zeros(P, error=1e-15, prec=3):
             _w = []
 
         for r in range(len(_z)):
-
+            # this piece of code gets rid of the approximation(s) (real or imaginary parts of these numbers)
+            # that are smaller than the tenth of th error given to the function, default error = 1x10^-15
             if abs(_z[r].real) < 0.1 * error:
                 _z[r] = complex(0, round(_z[r].imag, prec))
 
@@ -167,4 +176,3 @@ def get_zeros(P, error=1e-15, prec=3):
         _z.sort(key=abs)
 
         return _z
-
