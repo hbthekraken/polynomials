@@ -17,17 +17,22 @@ class Polynomial:
     # P(x) = x^2 + 2x + 3
 
     def __init__(self, *coefficients):  # coefficients = [an, an-1, an-2, ..., a3, a2, a1, a0]
+
         self.a = list(coefficients)
 
-        for index in range(0, len(self.a)):
-            if self.a[index] == 0:
-                del self.a[index]
-            else:
-                continue
+        while True:
+            try:
+                if self.a[0] == 0:
+                    del self.a[0]
+                else:
+                    break
+            except IndexError:
+                break
 
         self.a.reverse()  # creating the main coefficient list in which coefficients are listed as a = [a0, a1, a2, ..., an-1, an]
         self.degree = len(self.a) - 1  # degree of the polynomial is determined from the number of coefficients
-        if not bool(self.a):  # an exception occurs when the list 'a' is empty, it means P(x) = 0, whose degree is not defined, so interpreted as float 'nan' here.
+        if not bool(
+                self.a):  # an exception occurs when the list 'a' is empty, it means P(x) = 0, whose degree is not defined, so interpreted as float 'nan' here.
             self.degree = float('nan')
             self.a = [0]
 
@@ -47,13 +52,72 @@ class Polynomial:
 
         return temp_sum
 
+    #  Common polynomial arithmetics
+    def __neg__(self):
+        temp_arr = list(term := -self.a[-index] for index in range(1, len(self.a) + 1))
+        return Polynomial(*temp_arr)
+
+    def __add__(self, Q):
+        temp_a = []
+        index = 0
+        for index in range(int(min(self.degree, Q.degree)) + 1):
+            temp_a.append(self.a[index] + Q.a[index])
+
+        if self.degree == Q.degree:
+            temp_a.reverse()
+            return Polynomial(*temp_a)
+        elif self.degree > Q.degree:
+            temp_a += self.a[index + 1:]
+            temp_a.reverse()
+            return Polynomial(*temp_a)
+        else:
+            temp_a += Q.a[index + 1:]
+            temp_a.reverse()
+            return Polynomial(*temp_a)
+
+    def __sub__(self, Q):
+        return self + (-Q)
+
+    def __mul__(self, Q):
+        if isnan(self.degree) or isnan(Q.degree):
+            return Polynomial(0)
+        k = self.degree + Q.degree
+        temp_q_a = Q.a + [0] * (k - Q.degree)
+        temp_p_a = self.a + [0] * (k - self.degree)
+
+        _c = []
+        for index in range(k + 1):
+            temp_sum = 0
+            for j in range(index + 1):
+                temp_sum += temp_p_a[j] * temp_q_a[index - j]
+            _c.append(temp_sum)
+        _c.reverse()
+        return Polynomial(*_c)
+
+    def __pow__(self, power):
+        if not isinstance(power, int):
+            raise TypeError("{0} is not supported as a power of a polynomial.".format(type(power)))
+        elif power < 0:
+            raise ValueError("Negative integers are not supported as polynomial exponents.")
+        if power == 0:
+            return Polynomial(1)
+        elif power == 1:
+            return self
+        else:
+            # if power >= 2 and is even, then it goes into a recursion and using the formula P^power = (P ^ power/2) * (P ^ power/2)
+            if power % 2 == 0:
+                return (self ** int(power / 2)) * (self ** int(power / 2))
+            # if power is odd, it becomes P * (P ^ (power-1)/2 ) * (P ^ (power-1)/2) )
+            else:
+                return self * (self ** int((power - 1) / 2)) * (self ** int((power - 1) / 2))
+
 
 def cmplx_sqrt(z):  # function to calculate the square-root of floats, integers and complex numbers.
     if isinstance(z, (float, int)):
         if z >= 0:
             return z ** .5
         else:
-            return complex(0, abs(z) ** .5)
+            return complex(0, (-z) ** .5)
 
     else:
         r = abs(z)
@@ -176,3 +240,5 @@ def get_zeros(P, error=1e-15, prec=3):
         _z.sort(key=abs)
 
         return _z
+
+    
